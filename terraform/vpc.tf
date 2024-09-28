@@ -221,3 +221,13 @@ resource "aws_nat_gateway" "nat-gateway-2" {
     aws_eip.ip-nat-gateway-2
   ]
 }
+
+# Criar grupo de sub-rede para o ElastiCache
+resource "aws_elasticache_subnet_group" "memcached_subnet_group" {
+  name       = "memcached-subnet-group"
+  subnet_ids = [aws_subnet.privada1.id, aws_subnet.privada2.id]
+
+  tags = {
+    Name = "Memcached Subnet Group"
+  }
+}

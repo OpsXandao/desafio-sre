@@ -83,3 +83,23 @@ resource "aws_security_group_rule" "allow_efs" {
   security_group_id = aws_security_group.sg_wordpress.id  # Grupo de segurança associado ao EFS
   cidr_blocks       = ["0.0.0.0/0"]  # Permite acesso de qualquer instância EC2
 }
+
+resource "aws_security_group" "sg_memcached" {
+  name        = "sg_memcached"
+  description = "Security group for the Memcached cluster"  # Alterei a descrição para inglês e removi caracteres especiais
+  vpc_id      = aws_vpc.main.id 
+
+  ingress {
+    from_port   = 11211  # Porta padrão do Memcached
+    to_port     = 11211
+    protocol    = "tcp"
+    cidr_blocks = [aws_subnet.publica1.cidr_block, aws_subnet.publica2.cidr_block]  # Permitir acesso das subnets públicas
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]  # Permitir todo o tráfego de saída
+  }
+}
