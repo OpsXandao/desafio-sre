@@ -74,4 +74,12 @@ resource "aws_security_group" "allow_rds" {
   }
 }
 
-
+# Adiciona a permissão no Security Group para o EFS
+resource "aws_security_group_rule" "allow_efs" {
+  type              = "ingress"
+  from_port         = 2049  # Porta NFS
+  to_port           = 2049
+  protocol          = "tcp"
+  security_group_id = aws_security_group.sg_wordpress.id  # Grupo de segurança associado ao EFS
+  cidr_blocks       = ["0.0.0.0/0"]  # Permite acesso de qualquer instância EC2
+}

@@ -23,3 +23,15 @@ cd /tmp
 wget https://projetoformacaosrelumr921298290312.s3.us-west-1.amazonaws.com/node_exporter.sh
 sudo unzip node_exporter-main.zip -d /tmp
 sudo sh node_exporter.sh
+
+# Instala os pacotes necessários para montar o EFS
+sudo yum install -y amazon-efs-utils
+
+# Cria o diretório para montar o EFS
+sudo mkdir -p /var/www/html/wp-content/uploads
+
+# Monta o EFS no diretório de uploads do WordPress
+sudo mount -t efs -o tls ${efs_id}:/ /var/www/html/wp-content/uploads
+
+# Adiciona a montagem ao /etc/fstab para montar automaticamente no boot
+echo "${efs_id}:/ /var/www/html/wp-content/uploads efs defaults,_netdev 0 0" | sudo tee -a /etc/fstab
