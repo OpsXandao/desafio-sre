@@ -78,3 +78,54 @@ resource "aws_autoscaling_attachment" "asg_attachment" {
   autoscaling_group_name = aws_autoscaling_group.wordpress_asg.name
   lb_target_group_arn    = aws_lb_target_group.wordpress_tg.arn
 }
+resource "aws_autoscaling_policy" "scale_up" {
+  name                   = "scale-up-policy"
+  scaling_adjustment      = 1
+  adjustment_type         = "ChangeInCapacity"
+  cooldown                = 300
+  autoscaling_group_name  = aws_autoscaling_group.wordpress_asg.name
+  metric_aggregation_type = "Average"
+}
+
+resource "aws_autoscaling_policy" "scale_down" {
+  name                   = "scale-down-policy"
+  scaling_adjustment      = -1
+  adjustment_type         = "ChangeInCapacity"
+  cooldown                = 300
+  autoscaling_group_name  = aws_autoscaling_group.wordpress_asg.name
+  metric_aggregation_type = "Average"
+}
+
+resource "aws_cloudwatch_metric_alarm" "cpu_high" {
+  alarm_name                = "cpu_high"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 2
+  metric_name               = "CPUUtilization"
+  namespace                 = "AWS/EC2"
+  period                    = 60
+  statistic                 = "Average"
+  threshold                 = 80
+  alarm_description         = "This metric monitors CPU utilization"
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.wordpress_asg.name
+  }
+
+  alarm_actions             = [aws_autoscaling_policy.scale_up.arn]
+}
+
+resource "aws_cloudwatch_metric_alarm" "cpu_low" {
+  alarm_name                = "cpu_low"
+  comparison_operator       = "LessThanOrEqualToThreshold"
+  evaluation_periods        = 2
+  metric_name               = "CPUUtilization"
+  namespace                 = "AWS/EC2"
+  period                    = 60
+  statistic                 = "Average"
+  threshold                 = 20
+  alarm_description         = "This metric monitors CPU utilization"
+  dimensions = {
+    AutoScalingGroupName = aws_autoscaling_group.wordpress_asg.name
+  }
+
+  alarm_actions             = [aws_autoscaling_policy.scale_down.arn]
+}
