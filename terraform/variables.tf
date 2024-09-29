@@ -1,4 +1,4 @@
-# Região padrão
+#a Região padrão
 variable "region" {
   description = "A região AWS a ser utilizada"
   default     = "us-east-1"

@@ -49,3 +49,32 @@
   service:
     name: php-fpm
     state: restarted
+
+- name: Instalar Memcached
+  apt:
+    name: memcached
+    state: present
+
+- name: Configurar Memcached
+  lineinfile:
+    path: /etc/memcached.conf
+    regexp: '^-m'
+    line: '-m 512'
+
+- name: Reiniciar o serviço Memcached
+  service:
+    name: memcached
+    state: restarted
+
+- name: Configurar o WordPress para usar Memcached
+  lineinfile:
+    path: /var/www/html/wordpress/wp-config.php
+    insertafter: '/* Add any custom values between this line and the "stop editing" line. */'
+    line: |
+      // Configurações do Memcached
+      define('WP_CACHE', true);
+      \$memcached_servers = array(
+          'default' => array(
+              '${memcached_host}', 11211
+          )
+      );
