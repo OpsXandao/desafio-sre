@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  web:
+    image: nginx:alpine
+    container_name: hello-world
+    ports:
+      - "8080:80"  # Mapeia a porta 8080 do host para a porta 80 do contêiner
+    volumes:
+      - ./html:/usr/share/nginx/html  # Mapeia o diretório local para o diretório do Nginx

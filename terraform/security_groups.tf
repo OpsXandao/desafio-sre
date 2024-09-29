@@ -103,3 +103,74 @@ resource "aws_security_group" "sg_memcached" {
     cidr_blocks = ["0.0.0.0/0"]  # Permitir todo o tráfego de saída
   }
 }
+
+resource "aws_security_group" "sg_private" {
+  name        = "private-ec-sg"
+  description = "Security Group for Private EC2 Instance with Docker"
+  vpc_id      = aws_vpc.main.id
+
+  # Regras de entrada (Ingress)
+  ingress {
+    from_port   = 22  # Acesso SSH, você pode remover se não precisar de acesso direto
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]  # Permite acesso apenas da VPC interna
+  }
+
+  ingress {
+    from_port   = 80  # Porta 80 para o servidor web no container Docker
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]  # Apenas dentro da VPC (substitua conforme necessário)
+  }
+
+  # Regras de saída (Egress)
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]  # Permitir todo o tráfego de saída
+  }
+
+  tags = {
+    Name = "sg-private-ec2"
+  }
+}
+
+resource "aws_security_group" "pritunl_sg" {
+  name        = "pritunl-sg"
+  description = "Security group for Pritunl server"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Acesso SSH de qualquer lugar
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Acesso HTTPS de qualquer lugar (Pritunl usa HTTPS)
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Acesso HTTP de qualquer lugar
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]  # Permitir todo o tráfego de saída
+  }
+
+  tags = {
+    Name = "pritunl-sg"
+  }
+}
