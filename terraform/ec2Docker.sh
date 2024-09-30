@@ -31,4 +31,7 @@ sudo docker-compose --version
 cd /tmp
 sudo wget https://github.com/OpsXandao/docker/raw/refs/heads/main/docker.zip
 sudo unzip docker.zip -d /tmp
-cd /tmp/docker/
+cd /tmp/docker/docker
+
+# Inicialização dos contêineres do Docker com Docker Compose
+sudo docker-compose up -d

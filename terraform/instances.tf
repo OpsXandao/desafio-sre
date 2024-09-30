@@ -29,9 +29,9 @@ resource "aws_launch_configuration" "wordpress_launch_config" {
 # Criação de um Auto Scaling Group para as instâncias EC2 que executam o WordPress
 resource "aws_autoscaling_group" "wordpress_asg" {
   launch_configuration = aws_launch_configuration.wordpress_launch_config.id # Usa a configuração de lançamento definida acima
-  min_size             = 1                                                   # Número mínimo de instâncias no Auto Scaling Group
+  min_size             = 1                                                  # Número mínimo de instâncias no Auto Scaling Group
   max_size             = 3                                                   # Número máximo de instâncias no Auto Scaling Group
-  desired_capacity     = 1                                                   # Capacidade desejada (número de instâncias inicialmente)
+  desired_capacity     = 2                                                   # Capacidade desejada (número de instâncias inicialmente)
 
   vpc_zone_identifier = [aws_subnet.publica1.id] # Identificador da subnet pública onde as instâncias serão lançadas
 
@@ -147,6 +147,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_low" {
   alarm_actions = [aws_autoscaling_policy.scale_down.arn] # Ação a ser executada (escalar para baixo)
 }
 
+# EC2 Privada
 resource "aws_instance" "docker_instance" {
   ami           = var.ami_image
   instance_type = var.type_instance
@@ -162,63 +163,25 @@ resource "aws_instance" "docker_instance" {
       efs_id           = aws_efs_file_system.wordpress_efs.id  # ID do EFS dinâmico
     }
   )
+tags = {
+    Name = "Hello-World"
+  }
 }
 
 
 # EC2 Instance para o Pritunl
-resource "aws_instance" "pritunl_server" {
-  ami                         = var.ami_image
-  instance_type               = var.type_instance
+resource "aws_instance" "this" {
+  ami       = var.ami_image                        # ID da AMI para a 
+  instance_type   = var.type_instance                    # Tipo de instância EC2
+  key_name        = aws_key_pair.this.key_name           # Nome da chave SSH para acesso às instâncias
+  security_groups = [aws_security_group.vpn_sg.id] 
+  user_data = base64encode(
+  templatefile("pritunl.sh", {}))
+  monitoring                  = true
   subnet_id                   = aws_subnet.publica1.id
   associate_public_ip_address = true
-  key_name                    = aws_key_pair.this.key_name
-  vpc_security_group_ids      = [aws_security_group.pritunl_sg.id]  # Corrigido aqui
-  iam_instance_profile        = aws_iam_instance_profile.pritunl_profile.name
-
+  
   tags = {
-    Name = "Pritunl VPN Server"
+    Name = "Pritunl"
   }
-
-  user_data = file("${path.module}/pritunl.sh")
-}
-
-resource "aws_iam_role" "pritunl_role" {
-  name = "pritunl-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy" "pritunl_policy" {
-  role = aws_iam_role.pritunl_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect   = "Allow"
-        Action   = [
-          "ec2:DescribeRouteTables",
-          "ec2:ReplaceRoute",
-          "ec2:CreateRoute"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
-
-resource "aws_iam_instance_profile" "pritunl_profile" {
-  name = "pritunl-instance-profile"
-  role = aws_iam_role.pritunl_role.name
 }
