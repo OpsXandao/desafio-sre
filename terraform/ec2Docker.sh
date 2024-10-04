@@ -27,11 +27,19 @@ sudo chmod +x /usr/local/bin/docker-compose
 sudo docker --version
 sudo docker-compose --version
 
+# Instala o unzip para descompactar arquivos
+sudo apt install -y unzip
+
 # Download e extração dos arquivos
 cd /tmp
 sudo wget https://github.com/OpsXandao/docker/raw/refs/heads/main/docker.zip
 sudo unzip docker.zip -d /tmp
-cd /tmp/docker/docker
+cd /tmp/docker/
 
-# Inicialização dos contêineres do Docker com Docker Compose
+#Move o arquivo index.html para o volume mapeado do Docker
+sudo mkdir -p /tmp/docker/html
+sudo mv /tmp/docker/index.html /tmp/docker/html/
+
+
+# Inicializa os contêineres do Docker com Docker Compose
 sudo docker-compose up -d
