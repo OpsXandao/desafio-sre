@@ -18,7 +18,7 @@ resource "aws_launch_configuration" "wordpress_launch_config" {
   security_groups = [aws_security_group.sg_wordpress.id]      # Grupo de segurança associado à instância
 
   # Script de inicialização (user data) que instala e configura o WordPress nas instâncias EC2
-  user_data = templatefile("xec2Wordpress.sh", {
+  user_data = templatefile("ec2Wordpress.sh", {
       wp_db_name       = aws_db_instance.bd_wordpress.db_name,  # Nome do banco de dados do WordPress
       wp_username      = aws_db_instance.bd_wordpress.username, # Usuário do banco de dados
       wp_user_password = aws_db_instance.bd_wordpress.password, # Senha do banco de dados
