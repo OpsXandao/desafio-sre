@@ -2,6 +2,35 @@
 
 Este projeto Terraform foi desenvolvido para provisionar uma infraestrutura robusta na Amazon Web Services (AWS), destinada a hospedar uma aplicação WordPress. A solução foi arquitetada para garantir alta disponibilidade, escalabilidade, otimização de desempenho por meio de caching e a implementação de containers Docker em uma instância privada, acessível apenas via VPN. A seguir, detalhamos os principais componentes e decisões de arquitetura que compõem esta solução.
 
+## Como usar
+Para usar o repositório do GitHub fornecido e implantar a infraestrutura com o Terraform, siga estas etapas detalhadas:
+
+1. Clone o Repositório: O primeiro passo é clonar o repositório que contém a configuração do Terraform. Abra o terminal e execute o seguinte comando:
+
+git clone https://github.com/OpsXandao/desafio-sre
+
+2. Acesse o Diretório Terraform: Após clonar o repositório, navegue até a pasta onde estão os arquivos do Terraform. Execute:
+ 
+cd terraform
+
+3. Inicialize o Terraform: O comando `terraform init` prepara o ambiente para a execução do Terraform. Ele baixa os plugins necessários e configura o diretório de trabalho. Execute:
+
+4. Planeje a Infraestrutura: Antes de aplicar as alterações, é importante revisar o que será criado, alterado ou destruído. Para fazer isso, execute:
+ 
+terraform plan -var-file="aws.tfvars"
+  
+Esse comando lê as variáveis definidas no arquivo `aws.tfvars` e gera um plano de execução, mostrando o que o Terraform fará sem aplicar as mudanças.
+
+5. Aplique as Alterações: Se o plano estiver correto e você estiver pronto para implementar a infraestrutura, execute:
+
+terraform apply -var-file="aws.tfvars"
+   
+ O Terraform solicitará sua confirmação antes de prosseguir. Digite `yes` para confirmar e iniciar o processo de criação dos recursos na AWS de acordo com a configuração especificada.
+
+## Link para documentação do projeto
+
+https://docs.google.com/document/d/1JpXfCUlOBwVbMGOnaPSn8_Z0RJewFEk9/edit?usp=sharing&ouid=118161454186679239653&rtpof=true&sd=true
+
 ## Requirements
 
 | Name | Version |
