@@ -29,7 +29,7 @@ terraform apply -var-file="aws.tfvars"
 
 ## Link para documentação do projeto
 
-https://docs.google.com/document/d/1JpXfCUlOBwVbMGOnaPSn8_Z0RJewFEk9/edit?usp=sharing&ouid=118161454186679239653&rtpof=true&sd=true
+https://drive.google.com/file/d/10dCip1_160iEaHZdxtc2thelmlENTBL7/view?usp=sharing
 
 ## Requirements
 
