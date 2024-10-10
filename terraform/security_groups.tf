@@ -38,6 +38,13 @@ resource "aws_security_group" "sg_wordpress" {
   }
 
   # Regras de saída (Egress)
+egress {
+    from_port       = 11211
+    to_port         = 11211
+    protocol        = "tcp"
+    security_groups = [aws_security_group.sg_memcached.id]
+  }
+
   egress {
     from_port        = 0
     to_port          = 0

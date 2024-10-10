@@ -24,6 +24,7 @@ resource "aws_launch_configuration" "wordpress_launch_config" {
       wp_user_password = aws_db_instance.bd_wordpress.password, # Senha do banco de dados
       wp_db_host       = aws_db_instance.bd_wordpress.address,  # Endereço do banco de dados
       efs_id           = aws_efs_file_system.wordpress_efs.id   # ID do EFS dinâmico
+      memcached_endpoint = aws_elasticache_cluster.memcached_cluster.cache_nodes[0].address
   })
 }
 
