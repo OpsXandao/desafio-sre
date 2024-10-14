@@ -19,7 +19,6 @@ resource "aws_efs_mount_target" "wordpress_efs_mt_b" {
   security_groups = [aws_security_group.sg_wordpress.id]
 }
 
-
 # Criação do ponto de acesso EFS
 resource "aws_efs_access_point" "wordpress_efs_access_point" {
   file_system_id = aws_efs_file_system.wordpress_efs.id  # ID do sistema de arquivos EFS

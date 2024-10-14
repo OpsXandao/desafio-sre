@@ -179,9 +179,7 @@ resource "aws_instance" "docker_instance" {
   subnet_id       = aws_subnet.privada1.id
   key_name        = aws_key_pair.this.key_name
   security_groups = [aws_security_group.sg_private.id]
-  user_data = templatefile("ec2Docker.sh", {
-    efs_id = aws_efs_file_system.wordpress_efs.id
-  })
+  user_data = file("ec2Docker.sh")
 
   tags = {
     Name = "Hello-World"
