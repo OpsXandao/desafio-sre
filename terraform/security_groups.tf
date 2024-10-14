@@ -21,6 +21,14 @@ resource "aws_security_group" "sg_wordpress" {
     cidr_blocks = ["0.0.0.0/0"]  # Permite tráfego HTTP (porta 80)
   }
 
+ ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Permite tráfego HTTPS (porta 443)
+  }
+
   ingress {
     description = "Node Exporter"
     from_port   = 9100
