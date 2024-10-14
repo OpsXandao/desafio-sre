@@ -19,11 +19,12 @@ resource "aws_launch_configuration" "wordpress_launch_config" {
 
   # Script de inicialização (user data) que instala e configura o WordPress nas instâncias EC2
   user_data = templatefile("ec2Wordpress.sh", {
-    wp_db_name         = aws_db_instance.bd_wordpress.db_name,  # Nome do banco de dados do WordPress
-    wp_username        = aws_db_instance.bd_wordpress.username, # Usuário do banco de dados
-    wp_user_password   = aws_db_instance.bd_wordpress.password, # Senha do banco de dados
-    wp_db_host         = aws_db_instance.bd_wordpress.address,  # Endereço do banco de dados
-    efs_id             = aws_efs_file_system.wordpress_efs.id   # ID do EFS dinâmico
+    wp_db_name       = aws_db_instance.bd_wordpress.db_name,               # Nome do banco de dados do WordPress
+    wp_username      = aws_db_instance.bd_wordpress.username,              # Usuário do banco de dados
+    wp_user_password = aws_db_instance.bd_wordpress.password,              # Senha do banco de dados
+    wp_db_host       = aws_db_instance.bd_wordpress.address,               # Endereço do banco de dados
+    efs_id           = aws_efs_file_system.wordpress_efs.id                # ID do EFS dinâmico
+    efs_access_point = aws_efs_access_point.wordpress_efs_access_point.id, # ID do ponto de acesso
     memcached_endpoint = aws_elasticache_cluster.memcached_cluster.cache_nodes[0].address
   })
 }
@@ -37,7 +38,7 @@ resource "aws_autoscaling_group" "wordpress_asg" {
   health_check_grace_period = 240
   health_check_type         = "ELB"
   force_delete              = true
-  vpc_zone_identifier       = [aws_subnet.publica1.id, aws_subnet.publica2.id]    # Múltiplas subnets para alta disponibilidade
+  vpc_zone_identifier       = [aws_subnet.publica1.id, aws_subnet.publica2.id] # Múltiplas subnets para alta disponibilidade
 
   # Associação com o Target Group do ALB
   target_group_arns = [aws_lb_target_group.wordpress_tg.arn]
@@ -46,7 +47,7 @@ resource "aws_autoscaling_group" "wordpress_asg" {
   tag {
     key                 = "Name"
     value               = "WordPress Server"
-    propagate_at_launch = true  # Propaga a tag para todas as instâncias ao iniciar
+    propagate_at_launch = true # Propaga a tag para todas as instâncias ao iniciar
   }
 
   # Dependências para garantir a ordem de criação correta
@@ -57,7 +58,7 @@ resource "aws_autoscaling_group" "wordpress_asg" {
     aws_db_instance.bd_wordpress,
     aws_security_group.allow_rds,
     aws_security_group.sg_wordpress
-    ]
+  ]
 }
 
 # Criação de um Application Load Balancer (ALB) para distribuir o tráfego entre as instâncias EC2

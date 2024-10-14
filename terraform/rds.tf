@@ -12,7 +12,7 @@ resource "aws_db_instance" "bd_wordpress" {
   skip_final_snapshot    = true                                     # Define se deve pular o snapshot final ao destruir a instância
   db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name # Grupo de sub-rede para a instância RDS
   vpc_security_group_ids = [aws_security_group.allow_rds.id]        # Grupo de segurança para permitir acesso ao RDS
-  multi_az               = true                                     # Alta disponibilidade
+  #multi_az               = true                                     # Alta disponibilidade
 
   # O ciclo de vida ignora alterações de senha para evitar que o Terraform faça mudanças na instância ao alterar a senha
   lifecycle {
