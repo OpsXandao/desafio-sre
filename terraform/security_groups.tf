@@ -29,6 +29,14 @@ resource "aws_security_group" "sg_wordpress" {
     cidr_blocks = ["0.0.0.0/0"]  # Permite tráfego para monitoramento (Node Exporter)
   }
 
+  ingress {
+  description = "MySQL"
+  from_port   = 3306
+  to_port     = 3306
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]  # Permite tráfego para MYSQL
+}
+
   # Regras de saída (Egress)
 egress {
     from_port       = 11211
